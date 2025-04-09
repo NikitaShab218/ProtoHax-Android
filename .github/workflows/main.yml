@@ -2,17 +2,19 @@ name: Build ProtoHax APK
 
 on:
   push:
-    branches: [ stable ] # Укажите ветку, например 'stable', или замените на нужную
-  workflow_dispatch: # Позволяет запускать сборку вручную
+    branches: [ stable ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Клонируем репозиторий
-    - name: Checkout repository
+    # 1. Проверяем основной репозиторий ProtoHax-Android
+    - name: Checkout ProtoHax-Android
       uses: actions/checkout@v4
+      with:
+        submodules: false # Сначала без субмодулей, чтобы избежать ошибок
 
     # 2. Устанавливаем JDK 11
     - name: Set up JDK 11
@@ -25,23 +27,20 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # 4. Собираем ProtoHax (основной модуль) и публикуем в локальный Maven
-    - name: Build ProtoHax core
+    # 4. Клонируем ProtoHax и его субмодули с правильной аутентификацией
+    - name: Clone ProtoHax with submodules
       run: |
-        cd ../
-        git clone --recurse-submodules https://github.com/hax0r31337/ProtoHax.git
-        cd ProtoHax
-        ./gradlew publishToMaven *publishToMavenLocal*
+        git clone --recurse-submodules https://github.com/hax0r31337/ProtoHax.git ../ProtoHax
+        cd ../ProtoHax
+        ./gradlew publishToMavenLocal
 
     # 5. Собираем APK
     - name: Build APK
-      run: |
-        ./gradlew assembleDebug
-      working-directory: ./ProtoHax-Android
+      run: ./gradlew assembleDebug
 
     # 6. Загружаем APK как артефакт
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: ProtoHax-Android-Debug
-        path: ./ProtoHax-Android/app/build/outputs/apk/debug/app-debug.apk
+        path: app/build/outputs/apk/debug/app-debug.apk
