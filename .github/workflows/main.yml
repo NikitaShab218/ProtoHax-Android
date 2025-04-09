@@ -28,7 +28,7 @@ jobs:
     # 4. Клонируем ваш форк ProtoHax (без субмодулей)
     - name: Clone ProtoHax
       run: |
-        git clone https://github.com/ВАШ_ЛОГИН/ProtoHax.git ../ProtoHax
+        git clone https://github.com/NikitaShab218/ProtoHax.git ../ProtoHax
         cd ../ProtoHax
         ./gradlew publishToMavenLocal
 
