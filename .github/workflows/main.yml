@@ -13,8 +13,6 @@ jobs:
     # 1. Проверяем основной репозиторий ProtoHax-Android
     - name: Checkout ProtoHax-Android
       uses: actions/checkout@v4
-      with:
-        submodules: false
 
     # 2. Устанавливаем JDK 11
     - name: Set up JDK 11
@@ -27,16 +25,11 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # 4. Клонируем ProtoHax с субмодулями и проверяем их
-    - name: Clone ProtoHax with submodules
-      env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    # 4. Клонируем ваш форк ProtoHax (без субмодулей)
+    - name: Clone ProtoHax
       run: |
-        git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
-        git clone --recurse-submodules https://github.com/hax0r31337/ProtoHax.git ../ProtoHax
+        git clone https://github.com/ВАШ_ЛОГИН/ProtoHax.git ../ProtoHax
         cd ../ProtoHax
-        git submodule status
-        git submodule update --init --recursive
         ./gradlew publishToMavenLocal
 
     # 5. Собираем APK
