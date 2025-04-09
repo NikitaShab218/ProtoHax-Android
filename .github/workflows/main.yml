@@ -14,7 +14,7 @@ jobs:
     - name: Checkout ProtoHax-Android
       uses: actions/checkout@v4
       with:
-        submodules: false # Сначала без субмодулей, чтобы избежать ошибок
+        submodules: false
 
     # 2. Устанавливаем JDK 11
     - name: Set up JDK 11
@@ -27,10 +27,12 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # 4. Клонируем ProtoHax и его субмодули с правильной аутентификацией
+    # 4. Клонируем ProtoHax с субмодулями, используя токен
     - name: Clone ProtoHax with submodules
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
-        git clone --recurse-submodules https://github.com/hax0r31337/ProtoHax.git ../ProtoHax
+        git clone --recurse-submodules https://$GH_TOKEN@github.com/hax0r31337/ProtoHax.git ../ProtoHax
         cd ../ProtoHax
         ./gradlew publishToMavenLocal
 
