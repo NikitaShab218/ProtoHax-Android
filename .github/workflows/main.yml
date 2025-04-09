@@ -27,15 +27,16 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # 4. Клонируем ProtoHax с субмодулями, применяя токен ко всем HTTPS-запросам
+    # 4. Клонируем ProtoHax с субмодулями и проверяем их
     - name: Clone ProtoHax with submodules
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
-        # Настраиваем Git для использования токена во всех HTTPS-запросах к GitHub
         git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
         git clone --recurse-submodules https://github.com/hax0r31337/ProtoHax.git ../ProtoHax
         cd ../ProtoHax
+        git submodule status
+        git submodule update --init --recursive
         ./gradlew publishToMavenLocal
 
     # 5. Собираем APK
